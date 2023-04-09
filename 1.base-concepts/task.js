@@ -18,8 +18,8 @@ console.log(solveEquation(1, 2, 3));
 console.log(solveEquation(2, 5, 4));
 
 function calculateTotalMortgage(percent, contribution, amount, countMonths) {
-  let yearlyPerc = (percent - 0) / (100 - 0);
-  let monthlyPerc = 0 + (1 - 0) * yearlyPerc / 12;
+  let yearlyPerc = percent / 100;
+  let monthlyPerc = 1 * yearlyPerc / 12;
   let bodyCredit  = amount - contribution;
   let monthlyLoanFee = bodyCredit * (monthlyPerc + (monthlyPerc / (((1 + monthlyPerc) ** countMonths) - 1)));
   
