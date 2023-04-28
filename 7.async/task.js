@@ -4,31 +4,19 @@ class AlarmClock {
         this.intervalId = null;
     }
 
-    addClock(time, callback) {
-        if (time === null || callback === undefined) {
-            throw new Error('Отсутствуют обязательные аргументы');
-        };
+    addClock(time, callback){
+        if (!time || !callback){
+          throw new Error('Отсутствуют обязательные аргументы');
+        } 
+        if(this.alarmCollection.some(call => call.time === time)){
+          console.warn('Уже присутствует звонок на это же время');
+        }
+        this.alarmCollection.push({time, callback, canCall: true});
+      }
 
-        if (this.alarmCollection.includes(time)) {
-            console.warn('Уже присутствует звонок на это же время');
-        };
-
-        this.alarmCollection.push({
-            callback: callback,
-            time: time,
-            canCall: true,
-        });
-    }
-
-    removeClock(value) {
-        this.alarmCollection.forEach(item => {
-        let index = this.alarmCollection.findIndex(e => e.time === value);
-        if (index !== -1) {
-            this.alarmCollection.splice(index, 1);
-        };
-        });
-
-    }
+      removeClock(time){
+        this.alarmCollection = this.alarmCollection.filter(call => call.time !== time);
+      }
 
     getCurrentFormattedTime() {
         let date = new Date ();
@@ -36,22 +24,18 @@ class AlarmClock {
         return currentTime;
     }
 
-    start() {
-        if (this.intervalId !== null) {
-            return;
-        } else {
-            this.intervalId = setInterval(() => {
-                this.alarmCollection.forEach((item,index) => {
-                    if (this.alarmCollection[index].time === this.getCurrentFormattedTime()) {
-                        this.alarmCollection[index].canCall = false;
-                        this.alarmCollection[index].callback();
-                    }
-                })
-            }, 1000);
+    start(){
+        if (this.intervalId){
+          return;
         }
-        return this.intervalId;
-    }
-
+    
+        this.intervalId = setInterval(() => this.alarmCollection.forEach((call) => {
+          if (call.time === this.getCurrentFormattedTime() && call.canCall){
+            call.canCall = false;
+            call.callback();
+          }
+        }), 1000);        
+      }
 
     stop() {
         clearInterval(this.intervalId);
